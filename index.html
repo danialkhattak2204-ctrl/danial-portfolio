@@ -277,11 +277,84 @@ body.is-loading{ overflow: hidden; }
   color: var(--white-30);
 }
 
-/* ============ 03 · ABOUT — cream chapter (static preview; wipe arrives in Phase 3) ============ */
-.chapter--about{ background: var(--cream); color: var(--ink); }
-.chapter--about .chapter__label{ color: rgba(20,20,27,.4); }
-.chapter--about .chapter__note{ color: rgba(20,20,27,.7); }
-.chapter--about .chapter__ghost{ color: var(--ink); opacity:.05; }
+/* ============ 03 · ABOUT — the paper chapter (Phase 3) ============ */
+.about{ border-bottom:none; padding:0; display:block; }
+.about__paper{
+  position: relative; overflow: hidden;
+  background: var(--cream); color: var(--ink);
+  padding: clamp(90px, 14vh, 170px) var(--gutter);
+  clip-path: inset(6% 5% 6% 5% round 28px);
+  will-change: clip-path;
+}
+.about .chapter__ghost{ color: var(--ink); opacity:.05; right: -4vw; }
+.about__grid{
+  position: relative; z-index: 2;
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: clamp(32px, 6vw, 90px);
+  align-items: center;
+  max-width: 1280px; margin: 0 auto;
+}
+.about__portrait{ position: relative; margin: 0; will-change: transform; }
+.about__portrait img{
+  width: 100%; height: auto; display: block;
+  mix-blend-mode: multiply;           /* pencil sinks into the paper — no white box edges */
+  filter: contrast(1.06);
+  will-change: transform, filter, opacity;
+}
+.about__portrait figcaption{
+  margin-top: 14px;
+  font-family: var(--font-mono); font-size: 10px;
+  letter-spacing: .18em; text-transform: uppercase;
+  color: rgba(20,20,27,.45);
+}
+.about__label{
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: .18em; text-transform: uppercase;
+  color: rgba(20,20,27,.4);
+  margin-bottom: 3vh;
+}
+.about__quote{
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" 100, "wght" 300;  /* lighter on paper — human register */
+  font-size: clamp(27px, 3.4vw, 52px);
+  line-height: 1.12;
+  letter-spacing: -.01em;
+}
+.about__quote em{
+  font-style: normal;
+  background: var(--grad);
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
+  font-variation-settings: "wdth" 100, "wght" 500;
+}
+.about__body p{
+  margin-top: 2.4vh;
+  max-width: 58ch;
+  color: rgba(20,20,27,.72);
+  font-size: clamp(15px, 1.25vw, 17.5px);
+  line-height: 1.7;
+}
+.about__stats{
+  display: flex; gap: clamp(28px, 5vw, 72px); flex-wrap: wrap;
+  margin-top: 5vh; padding-top: 3.5vh;
+  border-top: 1px solid rgba(20,20,27,.14);
+}
+.stat__num{
+  font-family: var(--font-mono); font-weight: 700;
+  font-size: clamp(26px, 3vw, 42px);
+  color: var(--ink);
+}
+.stat__lbl{
+  margin-top: 4px;
+  font-family: var(--font-mono); font-size: 10px;
+  letter-spacing: .16em; text-transform: uppercase;
+  color: rgba(20,20,27,.5);
+}
+@media (max-width: 880px){
+  .about__grid{ grid-template-columns: 1fr; }
+  .about__portrait{ max-width: 340px; }
+}
 
 /* ============ FOOTER STRIP ============ */
 .foot{
@@ -387,11 +460,30 @@ body.is-loading{ overflow: hidden; }
   <p class="manifesto__credit">02 · Manifesto</p>
 </section>
 
-<!-- ============ 03 · ABOUT (cream) ============ -->
-<section class="chapter chapter--about" id="about">
-  <span class="chapter__ghost" aria-hidden="true">03</span>
-  <p class="chapter__label">03 · The Paper Chapter — clip-path wipe arrives in Phase 3</p>
-  <p class="chapter__note">Sketch portrait + story + stats counters live here, ink on cream.</p>
+<!-- ============ 03 · ABOUT — the paper chapter ============ -->
+<section class="chapter about" id="about">
+  <div class="about__paper">
+    <span class="chapter__ghost" aria-hidden="true">03</span>
+    <div class="about__grid">
+      <figure class="about__portrait">
+        <img src="assets/d-sketch.webp" alt="Pencil sketch portrait of Danial Khattak" loading="lazy" width="1024" height="1024">
+        <figcaption>Self — graphite study</figcaption>
+      </figure>
+      <div class="about__right">
+        <p class="about__label">03 · About</p>
+        <h2 class="about__quote">The craft came first. <em>The machine</em> came later.</h2>
+        <div class="about__body">
+          <p>Six years designing across the whole surface of a brand — product UI, packaging, campaigns, motion, apparel — from startup war rooms to Delivery Hero's foodpanda, and now as Visual Designer at APIMatic, where developer tools meet marketing craft.</p>
+          <p>Today I work AI-first: Midjourney, Firefly and Runway sit beside Figma in my toolbar. The tools generate at machine speed; taste decides what ships. Faster exploration, sharper instincts — work neither of us could make alone.</p>
+        </div>
+        <div class="about__stats">
+          <div class="stat"><div class="stat__num" data-count="80" data-suffix="+">0</div><div class="stat__lbl">Projects shipped</div></div>
+          <div class="stat"><div class="stat__num" data-count="6" data-suffix="+">0</div><div class="stat__lbl">Years in craft</div></div>
+          <div class="stat"><div class="stat__num" data-count="3" data-suffix="">0</div><div class="stat__lbl">Countries, remote</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
 <!-- ============ 04 · WORK ============ -->
@@ -676,6 +768,67 @@ if (!reduceMotion){
     }
   });
 }
+
+/* ============================================================
+   PHASE 3 · ABOUT — paper unfold, sketch resolve, counters
+   ============================================================ */
+const paper = document.querySelector('.about__paper');
+const portrait = document.querySelector('.about__portrait');
+
+if (!reduceMotion){
+  /* sheet unfolds to full-bleed as it enters (WIPE, entrance) */
+  gsap.fromTo(paper,
+    { clipPath: 'inset(6% 5% 6% 5% round 28px)' },
+    { clipPath: 'inset(0% 0% 0% 0% round 0px)', ease: 'none',
+      scrollTrigger: { trigger: '#about', start: 'top 92%', end: 'top 18%', scrub: 0.35 } });
+
+  /* the void swallows it back as it leaves (WIPE, exit) */
+  gsap.to(paper, {
+    clipPath: 'inset(6% 5% 6% 5% round 28px)', ease: 'none', immediateRender: false,
+    scrollTrigger: { trigger: '#about', start: 'bottom 78%', end: 'bottom 8%', scrub: 0.35 } });
+
+  /* sketch RESOLVE: blur → sharp on arrival */
+  gsap.fromTo('.about__portrait img',
+    { opacity: 0, scale: 1.06, filter: 'blur(18px) contrast(1.06)' },
+    { opacity: 1, scale: 1, filter: 'blur(0px) contrast(1.06)',
+      duration: 1.5, ease: 'expo.out',
+      scrollTrigger: { trigger: '.about__portrait', start: 'top 72%' } });
+
+  /* portrait drifts at L+1 through the chapter */
+  gsap.fromTo(portrait, { y: 44 }, { y: -44, ease: 'none',
+    scrollTrigger: { trigger: '#about', start: 'top bottom', end: 'bottom top', scrub: 0.4 } });
+
+  /* story column staggers up */
+  gsap.from('.about__right > *', {
+    y: 36, opacity: 0, duration: 1.05, ease: 'expo.out', stagger: 0.09,
+    scrollTrigger: { trigger: '.about__grid', start: 'top 68%' } });
+
+  /* slow 2° tilt toward cursor (fine pointers only) */
+  if (finePointer){
+    paper.addEventListener('mousemove', (e) => {
+      const r = paper.getBoundingClientRect();
+      const nx = ((e.clientX - r.left) / r.width) - .5;
+      const ny = ((e.clientY - r.top) / r.height) - .5;
+      gsap.to(portrait, { rotateY: nx * 4, rotateX: -ny * 4, transformPerspective: 900, duration: 1.2, ease: 'power2.out' });
+    });
+    paper.addEventListener('mouseleave', () => {
+      gsap.to(portrait, { rotateY: 0, rotateX: 0, duration: 1, ease: 'power2.out' });
+    });
+  }
+}
+
+/* stats counters tick up on arrival (instant when reduced motion) */
+document.querySelectorAll('.stat__num').forEach(el => {
+  const end = parseFloat(el.dataset.count);
+  const suffix = el.dataset.suffix || '';
+  if (reduceMotion){ el.textContent = end + suffix; return; }
+  const o = { v: 0 };
+  gsap.to(o, {
+    v: end, duration: 1.6, ease: 'power2.out',
+    scrollTrigger: { trigger: '.about__stats', start: 'top 88%' },
+    onUpdate(){ el.textContent = Math.round(o.v) + suffix; }
+  });
+});
 
 /* ============ SCROLL PROGRESS LINE ============ */
 gsap.to('.progress', {
