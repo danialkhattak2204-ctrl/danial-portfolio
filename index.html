@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Danial Khattak — AI-First Visual Designer</title>
+<meta name="description" content="Danial Khattak — AI-First Visual Designer. Portfolio, rendered by hand and machine.">
+
+<!-- ============ FONTS ============ -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,100..900&family=Space+Grotesk:wght@300..700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   RENDER — design tokens (spec §1)
+   ============================================================ */
+:root{
+  --void:      #05060B;
+  --void-2:    #0A0C14;
+  --electric:  #2E6BFF;
+  --neon:      #A855F7;
+  --grad:      linear-gradient(120deg, #2E6BFF, #A855F7);
+  --cream:     #F2EDE4;
+  --ink:       #14141B;
+  --white:     #FFFFFF;
+  --white-60:  rgba(255,255,255,.6);
+  --white-30:  rgba(255,255,255,.3);
+  --white-10:  rgba(255,255,255,.1);
+  --glow-blue:   rgba(46,107,255,.35);
+  --glow-purple: rgba(168,85,247,.30);
+
+  --font-display: "Anybody", sans-serif;
+  --font-body:    "Space Grotesk", sans-serif;
+  --font-mono:    "Space Mono", monospace;
+
+  --ease-out: cubic-bezier(.16,1,.3,1);
+  --gutter: clamp(20px, 4vw, 64px);
+}
+
+*{ margin:0; padding:0; box-sizing:border-box; }
+html{ scrollbar-width:none; }
+html::-webkit-scrollbar{ display:none; }
+
+body{
+  background: var(--void);
+  color: var(--white);
+  font-family: var(--font-body);
+  font-weight: 300;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+body.is-loading{ overflow: hidden; }
+
+::selection{ background: var(--electric); color: var(--white); }
+
+/* ============ GRAIN OVERLAY ============ */
+.grain{
+  position: fixed; inset: -50%;
+  width: 200%; height: 200%;
+  pointer-events: none;
+  z-index: 200;
+  opacity: .05;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain-shift 8s steps(10) infinite;
+}
+@keyframes grain-shift{
+  0%,100%{ transform:translate(0,0); }
+  20%{ transform:translate(-2%,3%); }
+  40%{ transform:translate(3%,-2%); }
+  60%{ transform:translate(-3%,-3%); }
+  80%{ transform:translate(2%,2%); }
+}
+
+/* ============================================================
+   PRELOADER — "the first render" (Phase 2)
+   ============================================================ */
+.loader{
+  position: fixed; inset: 0;
+  z-index: 300;
+  background: var(--void);
+  display:flex; align-items:center; justify-content:center;
+}
+.loader__mark{
+  width: clamp(120px, 18vw, 220px);
+  height: auto;
+  will-change: transform, opacity;
+}
+.loader__mark .draw{
+  fill: transparent;
+  stroke: url(#gradStroke);
+  stroke-width: 6;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+.loader__meta{
+  position: absolute;
+  left: var(--gutter); bottom: 28px; right: var(--gutter);
+  display:flex; justify-content:space-between; align-items:baseline;
+  font-family: var(--font-mono);
+  letter-spacing: .14em; text-transform: uppercase;
+}
+.loader__status{ font-size: 10px; color: var(--white-30); }
+.loader__count{
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 700; color: var(--white);
+}
+.loader__count sup{ font-size: .4em; color: var(--white-30); margin-left: 4px; }
+
+/* ============ NAV ============ */
+.nav{
+  position: fixed; top:0; left:0; right:0;
+  z-index: 100;
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 20px var(--gutter);
+  mix-blend-mode: difference; /* auto-inverts over the cream chapter */
+  opacity: 0; /* revealed after preloader */
+}
+.nav__mark{ display:flex; align-items:center; text-decoration:none; }
+.nav__mark svg{ width: 26px; height: auto; display:block; }
+.nav__mark svg *{ fill: var(--white); }
+.nav__links{ display:flex; gap: 28px; }
+.nav__links a{
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing:.12em; text-transform:uppercase;
+  color: var(--white); text-decoration:none;
+  opacity:.65; transition: opacity .3s var(--ease-out);
+}
+.nav__links a:hover, .nav__links a:focus-visible{ opacity:1; }
+.nav__links a span{ opacity:.45; margin-right:6px; }
+
+/* scroll progress line */
+.progress{
+  position: fixed; top:0; left:0; z-index:150;
+  height:2px; width:100%;
+  background: var(--grad);
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+}
+
+/* ============ CHAPTER RAIL ============ */
+.rail{
+  position: fixed; right: 18px; top: 50%;
+  transform: translateY(-50%);
+  z-index: 90;
+  display:flex; flex-direction:column; gap:14px;
+  mix-blend-mode: difference;
+}
+.rail a{
+  width:6px; height:6px; border-radius:50%;
+  background: var(--white); opacity:.25;
+  transition: opacity .3s, transform .3s;
+}
+.rail a.is-active{ opacity:1; transform: scale(1.5);
+  box-shadow: 0 0 12px var(--glow-blue); }
+
+/* ============ CHAPTER SKELETONS ============ */
+.chapter{
+  position: relative;
+  min-height: 100vh;
+  display:flex; flex-direction:column;
+  justify-content:center;
+  padding: 0 var(--gutter);
+  border-bottom: 1px solid var(--white-10); /* skeleton guide — removed in later phases */
+}
+.chapter__ghost{
+  position:absolute; right: -2vw; top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" 60, "wght" 900;
+  font-size: 30vw; line-height:1;
+  color: var(--white); opacity:.04;
+  pointer-events:none; user-select:none;
+  z-index:0;
+}
+.chapter__label{
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing:.18em; text-transform:uppercase;
+  color: var(--white-30);
+}
+.chapter__note{
+  margin-top: 12px; max-width: 46ch;
+  color: var(--white-60); font-size: 15px; line-height:1.6;
+}
+
+/* ============ 01 · HERO ============ */
+.hero{ border-bottom:none; overflow:hidden; }
+.hero__canvas{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  will-change: transform;
+}
+.hero__orb{
+  position:absolute; border-radius:50%;
+  filter: blur(90px); pointer-events:none;
+  will-change: transform;
+}
+.hero__orb--blue{
+  width: 44vw; height:44vw; min-width:340px; min-height:340px;
+  top:-12%; left:-10%;
+  background: radial-gradient(circle, var(--glow-blue), transparent 70%);
+}
+.hero__orb--purple{
+  width: 38vw; height:38vw; min-width:300px; min-height:300px;
+  bottom:-14%; right:-8%;
+  background: radial-gradient(circle, var(--glow-purple), transparent 70%);
+}
+.hero__eyebrow, .hero__name, .hero__tagline, .hero__cue{ position: relative; z-index: 2; }
+.hero__eyebrow{
+  font-family: var(--font-mono); font-size: 12px;
+  letter-spacing:.2em; text-transform:uppercase;
+  color: var(--white-60);
+  margin-bottom: 3vh;
+}
+.hero__eyebrow em{ font-style:normal; color: var(--electric); }
+.hero__name{
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" 150, "wght" 900;
+  font-size: clamp(48px, 11vw, 176px);
+  line-height: .92;
+  letter-spacing: -.01em;
+  text-transform: uppercase;
+  will-change: font-variation-settings, transform;
+}
+.hero__name .line{
+  display:block;
+  overflow: hidden; /* mask for the rise-in entrance */
+}
+.hero__name .line > span{ display:block; will-change: transform; }
+.hero__tagline{
+  margin-top: 4vh;
+  font-size: clamp(15px, 1.4vw, 19px);
+  color: var(--white-60);
+  max-width: 42ch;
+}
+.hero__cue{
+  position:absolute; bottom: 32px; left: var(--gutter);
+  display:flex; align-items:center; gap:14px;
+  font-family: var(--font-mono); font-size:10px;
+  letter-spacing:.2em; color: var(--white-30);
+}
+.hero__cue::before{
+  content:""; width:48px; height:1px;
+  background: var(--grad);
+  animation: cue-pulse 2.2s var(--ease-out) infinite;
+  transform-origin: 0 50%;
+}
+@keyframes cue-pulse{
+  0%{ transform:scaleX(0); opacity:0; }
+  40%{ transform:scaleX(1); opacity:1; }
+  100%{ transform:scaleX(1) translateX(16px); opacity:0; }
+}
+/* pre-entrance states (set here so there's no flash before JS runs) */
+.js .hero__eyebrow, .js .hero__tagline, .js .hero__cue{ opacity: 0; }
+.js .hero__name .line > span{ transform: translateY(110%); }
+
+/* ============ 02 · MANIFESTO ============ */
+.manifesto{ border-bottom:none; }
+.manifesto__line{
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" 100, "wght" 500;
+  font-size: clamp(30px, 5.2vw, 76px);
+  line-height: 1.12;
+  text-transform: uppercase;
+  max-width: 18ch;
+  position: relative; z-index: 2;
+}
+.manifesto__line .w{
+  display:inline-block;
+  will-change: filter, opacity, font-variation-settings;
+}
+.manifesto__credit{
+  margin-top: 3vh;
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing:.18em; text-transform:uppercase;
+  color: var(--white-30);
+}
+
+/* ============ 03 · ABOUT — cream chapter (static preview; wipe arrives in Phase 3) ============ */
+.chapter--about{ background: var(--cream); color: var(--ink); }
+.chapter--about .chapter__label{ color: rgba(20,20,27,.4); }
+.chapter--about .chapter__note{ color: rgba(20,20,27,.7); }
+.chapter--about .chapter__ghost{ color: var(--ink); opacity:.05; }
+
+/* ============ FOOTER STRIP ============ */
+.foot{
+  display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap;
+  padding: 24px var(--gutter);
+  font-family: var(--font-mono); font-size: 10px;
+  letter-spacing:.14em; text-transform:uppercase;
+  color: var(--white-30);
+}
+
+/* ============ REDUCED MOTION ============ */
+@media (prefers-reduced-motion: reduce){
+  .grain{ animation:none; }
+  .hero__cue::before{ animation:none; transform:scaleX(1); opacity:1; }
+  .loader{ display:none; }
+  .nav{ opacity:1; }
+  .js .hero__eyebrow, .js .hero__tagline, .js .hero__cue{ opacity:1; }
+  .js .hero__name .line > span{ transform:none; }
+}
+
+/* ============ MOBILE ============ */
+@media (max-width: 720px){
+  .rail{ display:none; }
+  .nav__links a span{ display:none; }
+  .chapter__ghost{ font-size: 44vw; right:-8vw; }
+  .hero__orb{ filter: blur(60px); }
+}
+</style>
+</head>
+<body class="is-loading">
+<script>document.body.classList.add('js');</script>
+
+<!-- Shared gradient defs for SVG strokes/fills -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="gradStroke" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2E6BFF"/>
+      <stop offset="100%" stop-color="#A855F7"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<div class="grain" aria-hidden="true"></div>
+<div class="progress" aria-hidden="true"></div>
+
+<!-- ============ PRELOADER ============ -->
+<div class="loader" id="loader" aria-hidden="true">
+  <!-- DK mark: D polygon (gets gradient fill — the "was red" half), K polygon, kite outline -->
+  <svg class="loader__mark" id="loaderMark" viewBox="55 -8 860 862" xmlns="http://www.w3.org/2000/svg">
+    <polygon class="draw" data-fill="url(#gradStroke)" pathLength="1" points="468.01 69.24 468.01 718.68 438.87 674.45 395.77 608.99 395.63 608.79 298.94 461.97 368.19 428.6 395.77 470.48 395.77 188.61 254.84 256.51 277.5 290.92 208.26 324.29 143.31 225.66 395.77 104.05 417.27 93.69 468.01 69.24"/>
+    <polygon class="draw" data-fill="#FFFFFF" pathLength="1" points="714.57 256.51 662.9 334.83 662.96 334.89 708.61 404.09 665.36 469.74 619.71 400.54 619.62 400.44 573.65 470.13 573.65 608.99 501.4 718.68 501.4 69.24 573.65 104.05 573.65 338.94 576.35 334.83 619.65 269.22 648.9 224.88 691.24 160.69 756.89 192.31 714.57 256.51"/>
+    <path class="draw" data-fill="#FFFFFF" pathLength="1" d="M484.71,0L62.57,203.36l422.13,640.93L906.84,203.36,484.71,0ZM103.72,214.73L484.71,31.2l380.99,183.54-380.99,578.46L103.72,214.73Z"/>
+  </svg>
+  <div class="loader__meta">
+    <span class="loader__status" id="loaderStatus">initializing canvas…</span>
+    <span class="loader__count"><span id="loaderCount">000</span><sup>/100</sup></span>
+  </div>
+</div>
+
+<nav class="nav" id="nav">
+  <a class="nav__mark" href="#hero" aria-label="Back to top">
+    <svg viewBox="55 -8 860 862" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="DK">
+      <polygon points="468.01 69.24 468.01 718.68 438.87 674.45 395.77 608.99 395.63 608.79 298.94 461.97 368.19 428.6 395.77 470.48 395.77 188.61 254.84 256.51 277.5 290.92 208.26 324.29 143.31 225.66 395.77 104.05 417.27 93.69 468.01 69.24"/>
+      <polygon points="714.57 256.51 662.9 334.83 662.96 334.89 708.61 404.09 665.36 469.74 619.71 400.54 619.62 400.44 573.65 470.13 573.65 608.99 501.4 718.68 501.4 69.24 573.65 104.05 573.65 338.94 576.35 334.83 619.65 269.22 648.9 224.88 691.24 160.69 756.89 192.31 714.57 256.51"/>
+      <path d="M484.71,0L62.57,203.36l422.13,640.93L906.84,203.36,484.71,0ZM103.72,214.73L484.71,31.2l380.99,183.54-380.99,578.46L103.72,214.73Z"/>
+    </svg>
+  </a>
+  <div class="nav__links">
+    <a href="#work"><span>04</span>Work</a>
+    <a href="#about"><span>03</span>About</a>
+    <a href="#contact"><span>07</span>Contact</a>
+  </div>
+</nav>
+
+<nav class="rail" aria-label="Chapters">
+  <a href="#hero" aria-label="Hero"></a>
+  <a href="#manifesto" aria-label="Manifesto"></a>
+  <a href="#about" aria-label="About"></a>
+  <a href="#work" aria-label="Work"></a>
+  <a href="#experience" aria-label="Experience"></a>
+  <a href="#skills" aria-label="Skills"></a>
+  <a href="#contact" aria-label="Contact"></a>
+</nav>
+
+<!-- ============ 01 · HERO ============ -->
+<section class="chapter hero" id="hero">
+  <canvas class="hero__canvas" id="heroCanvas" aria-hidden="true"></canvas>
+  <div class="hero__orb hero__orb--blue" data-drift="24"></div>
+  <div class="hero__orb hero__orb--purple" data-drift="-16"></div>
+  <p class="hero__eyebrow"><em>●</em> AI-First Visual Designer — ISB/PK → Worldwide</p>
+  <h1 class="hero__name" id="heroName">
+    <span class="line"><span>Danial</span></span>
+    <span class="line"><span>Khattak</span></span>
+  </h1>
+  <p class="hero__tagline">I design what AI can't imagine alone.</p>
+  <p class="hero__cue">Scroll to render</p>
+</section>
+
+<!-- ============ 02 · MANIFESTO ============ -->
+<section class="chapter manifesto" id="manifesto">
+  <span class="chapter__ghost" aria-hidden="true">02</span>
+  <h2 class="manifesto__line" id="manifestoLine">I design like the tools are alive — because now, they are.</h2>
+  <p class="manifesto__credit">02 · Manifesto</p>
+</section>
+
+<!-- ============ 03 · ABOUT (cream) ============ -->
+<section class="chapter chapter--about" id="about">
+  <span class="chapter__ghost" aria-hidden="true">03</span>
+  <p class="chapter__label">03 · The Paper Chapter — clip-path wipe arrives in Phase 3</p>
+  <p class="chapter__note">Sketch portrait + story + stats counters live here, ink on cream.</p>
+</section>
+
+<!-- ============ 04 · WORK ============ -->
+<section class="chapter" id="work">
+  <span class="chapter__ghost" aria-hidden="true">04</span>
+  <p class="chapter__label">04 · The Gallery Passage — pinned horizontal build is Phase 4</p>
+  <p class="chapter__note">Six category slides with infinite marquee columns. This block will grow to ~400vh of pinned scroll.</p>
+</section>
+
+<!-- ============ 05 · EXPERIENCE ============ -->
+<section class="chapter" id="experience">
+  <span class="chapter__ghost" aria-hidden="true">05</span>
+  <p class="chapter__label">05 · The Timeline Drift — Phase 5</p>
+  <p class="chapter__note">Glass cards + gradient beam drawing down the career line.</p>
+</section>
+
+<!-- ============ 06 · SKILLS ============ -->
+<section class="chapter" id="skills">
+  <span class="chapter__ghost" aria-hidden="true">06</span>
+  <p class="chapter__label">06 · The Toolfield — Phase 5</p>
+  <p class="chapter__note">Floating magnetic chips. Tools are prompts; taste is the model.</p>
+</section>
+
+<!-- ============ 07 · CONTACT ============ -->
+<section class="chapter" id="contact">
+  <span class="chapter__ghost" aria-hidden="true">07</span>
+  <p class="chapter__label">07 · The Final Render — Phase 6</p>
+  <p class="chapter__note">Pull-back exit, magnetic CTA, copy-email, Islamabad local time.</p>
+</section>
+
+<footer class="foot">
+  <span>© 2026 Danial Khattak</span>
+  <span>Rendered by hand &amp; machine</span>
+</footer>
+
+<!-- ============ LIBS ============ -->
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
+
+<script>
+gsap.registerPlugin(ScrollTrigger);
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const finePointer  = window.matchMedia('(pointer:fine)').matches;
+
+/* ============ LENIS ⇄ SCROLLTRIGGER SYNC ============ */
+let lenis = null;
+if (!reduceMotion){
+  lenis = new Lenis({ lerp: 0.08, smoothWheel: true });
+  lenis.on('scroll', ScrollTrigger.update);
+  gsap.ticker.add((time) => lenis.raf(time * 1000));
+  gsap.ticker.lagSmoothing(0);
+}
+
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', (e) => {
+    const target = document.querySelector(a.getAttribute('href'));
+    if (!target) return;
+    e.preventDefault();
+    lenis ? lenis.scrollTo(target) : target.scrollIntoView({ behavior:'smooth' });
+  });
+});
+
+/* ============================================================
+   PHASE 2A · HERO PARTICLE FIELD (canvas 2D — spec: only WebGL/canvas layer)
+   ============================================================ */
+const canvas = document.getElementById('heroCanvas');
+const ctx = canvas.getContext('2d');
+const isMobile = window.matchMedia('(max-width: 720px)').matches;
+const P_COUNT = reduceMotion ? 0 : (isMobile ? 120 : 380);
+const particles = [];
+const mouse = { x: -9999, y: -9999 };
+let fieldActive = true;
+let dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+
+function sizeCanvas(){
+  dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+  canvas.width  = canvas.offsetWidth  * dpr;
+  canvas.height = canvas.offsetHeight * dpr;
+}
+
+function makeParticle(){
+  const blue = Math.random() > 0.42;
+  return {
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    vx: (Math.random() - .5) * .12 * dpr,
+    vy: (Math.random() - .5) * .12 * dpr,
+    r: (Math.random() * 1.6 + .4) * dpr,
+    baseA: Math.random() * .5 + .15,
+    tw: Math.random() * Math.PI * 2,          // twinkle phase
+    twS: Math.random() * .015 + .004,          // twinkle speed
+    c: blue ? '46,107,255' : '168,85,247'
+  };
+}
+
+function initField(){
+  sizeCanvas();
+  particles.length = 0;
+  for (let i = 0; i < P_COUNT; i++) particles.push(makeParticle());
+}
+
+function tickField(){
+  if (!fieldActive || P_COUNT === 0) return;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const mR = 120 * dpr; // mouse repulsion radius
+  for (const p of particles){
+    // drift
+    p.x += p.vx; p.y += p.vy;
+    // soft mouse repulsion
+    const dx = p.x - mouse.x * dpr, dy = p.y - mouse.y * dpr;
+    const d2 = dx*dx + dy*dy;
+    if (d2 < mR*mR && d2 > 0.01){
+      const d = Math.sqrt(d2), f = (1 - d/mR) * .6;
+      p.x += (dx/d) * f * dpr;
+      p.y += (dy/d) * f * dpr;
+    }
+    // wrap edges
+    if (p.x < 0) p.x = canvas.width;  else if (p.x > canvas.width)  p.x = 0;
+    if (p.y < 0) p.y = canvas.height; else if (p.y > canvas.height) p.y = 0;
+    // twinkle + draw
+    p.tw += p.twS;
+    const a = p.baseA * (0.6 + 0.4 * Math.sin(p.tw));
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, 6.2832);
+    ctx.fillStyle = 'rgba(' + p.c + ',' + a.toFixed(3) + ')';
+    ctx.fill();
+  }
+}
+gsap.ticker.add(tickField);
+
+/* pause when hero is offscreen; parallax the whole field at ~0.25x (layer L−2) */
+ScrollTrigger.create({
+  trigger: '#hero', start: 'top bottom', end: 'bottom top',
+  onToggle(self){ fieldActive = self.isActive; }
+});
+if (!reduceMotion){
+  gsap.to('#heroCanvas', {
+    yPercent: 25, ease: 'none',
+    scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 0.4 }
+  });
+}
+window.addEventListener('mousemove', (e) => {
+  const r = canvas.getBoundingClientRect();
+  mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top;
+});
+window.addEventListener('resize', () => { sizeCanvas(); });
+initField();
+
+/* ============================================================
+   PHASE 2B · PRELOADER — counter + stroke-draw + zoom-through
+   ============================================================ */
+const loader = document.getElementById('loader');
+const statusEl = document.getElementById('loaderStatus');
+const countEl = document.getElementById('loaderCount');
+const drawShapes = document.querySelectorAll('#loaderMark .draw');
+const seen = sessionStorage.getItem('rendered'); // skip on repeat visits
+
+const STATUS_LINES = [
+  'initializing canvas…',
+  'loading 6+ years…',
+  'sharpening pixels…',
+  'rendering portfolio…'
+];
+
+function heroIntro(fast){
+  const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
+  tl.to('.hero__name .line > span', { y: 0, duration: fast ? .7 : 1.1, stagger: .12 })
+    .to('.hero__eyebrow', { opacity: 1, duration: .8 }, '-=.6')
+    .to('.hero__tagline', { opacity: 1, duration: .8 }, '-=.55')
+    .to('.hero__cue',     { opacity: 1, duration: .8 }, '-=.5')
+    .to('#nav',           { opacity: 1, duration: .8 }, '-=.7');
+  return tl;
+}
+
+if (reduceMotion){
+  loader.remove();
+  document.body.classList.remove('is-loading');
+} else if (seen){
+  loader.remove();
+  document.body.classList.remove('is-loading');
+  heroIntro(true);
+} else {
+  lenis && lenis.stop();
+
+  // cycling status copy
+  let sIdx = 0;
+  const statusTimer = setInterval(() => {
+    sIdx = (sIdx + 1) % STATUS_LINES.length;
+    statusEl.textContent = STATUS_LINES[sIdx];
+  }, 480);
+
+  const load = gsap.timeline({
+    onComplete(){
+      clearInterval(statusTimer);
+      sessionStorage.setItem('rendered', '1');
+      document.body.classList.remove('is-loading');
+      lenis && lenis.start();
+      loader.remove();
+    }
+  });
+
+  // 1 · stroke draw (all three shapes, slight stagger)
+  load.to(drawShapes, {
+    strokeDashoffset: 0, duration: 1.25, stagger: .12, ease: 'power2.inOut'
+  });
+
+  // 2 · counter runs alongside the draw
+  const count = { v: 0 };
+  load.to(count, {
+    v: 100, duration: 1.7, ease: 'power2.out',
+    onUpdate(){ countEl.textContent = String(Math.round(count.v)).padStart(3, '0'); }
+  }, 0);
+
+  // 3 · fill fade: D → gradient, K + kite → white
+  drawShapes.forEach((s, i) => {
+    load.to(s, {
+      fill: s.dataset.fill, strokeOpacity: 0, duration: .5, ease: 'power1.inOut'
+    }, 1.15 + i * .08);
+  });
+
+  // 4 · beat, then zoom-through past camera + fade the shell
+  load.to('#loaderMark', {
+    scale: 16, opacity: 0, duration: 1.0, ease: 'expo.in',
+    transformOrigin: '50% 42%'
+  }, '+=0.25');
+  load.to('.loader__meta', { opacity: 0, duration: .3 }, '<');
+  load.to(loader, { opacity: 0, duration: .45, ease: 'power1.out' }, '-=.35');
+
+  // 5 · hero enters as the loader dies
+  load.add(heroIntro(false), '-=.5');
+}
+
+/* ============================================================
+   PHASE 2C · HERO SCROLL — name compression + rise (variable font move #1)
+   ============================================================ */
+const heroName = document.getElementById('heroName');
+const axes = { wdth: 150, wght: 900 };
+if (!reduceMotion){
+  gsap.to(axes, {
+    wdth: 75, wght: 700, ease: 'none',
+    scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 0.4 },
+    onUpdate(){
+      heroName.style.fontVariationSettings = '"wdth" ' + axes.wdth + ', "wght" ' + axes.wght;
+    }
+  });
+  gsap.to(heroName, {
+    yPercent: -18, opacity: 0.15, ease: 'none',
+    scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 0.4 }
+  });
+}
+
+/* ============ ORB MOUSE DRIFT (L−1) ============ */
+if (!reduceMotion && finePointer){
+  const orbs = document.querySelectorAll('[data-drift]');
+  window.addEventListener('mousemove', (e) => {
+    const nx = (e.clientX / innerWidth) - .5;
+    const ny = (e.clientY / innerHeight) - .5;
+    orbs.forEach(o => {
+      const amp = parseFloat(o.dataset.drift);
+      gsap.to(o, { x: nx * amp, y: ny * amp, duration: 1.4, ease: 'power2.out' });
+    });
+  });
+}
+
+/* ============================================================
+   PHASE 2D · MANIFESTO — pinned word-by-word render (RESOLVE + CONDENSE)
+   ============================================================ */
+const mLine = document.getElementById('manifestoLine');
+mLine.innerHTML = mLine.textContent.trim().split(/\s+/)
+  .map(w => '<span class="w">' + w + '</span>').join(' ');
+const words = mLine.querySelectorAll('.w');
+
+if (!reduceMotion){
+  gsap.set(words, { opacity: .08, filter: 'blur(14px)', fontVariationSettings: '"wdth" 100, "wght" 200' });
+  gsap.to(words, {
+    opacity: 1, filter: 'blur(0px)', fontVariationSettings: '"wdth" 100, "wght" 600',
+    ease: 'none', stagger: .35,
+    scrollTrigger: {
+      trigger: '#manifesto', start: 'top top', end: '+=90%',
+      pin: true, scrub: 0.3
+    }
+  });
+}
+
+/* ============ SCROLL PROGRESS LINE ============ */
+gsap.to('.progress', {
+  scaleX: 1, ease: 'none',
+  scrollTrigger: { start: 0, end: 'max', scrub: 0.3 }
+});
+
+/* ============ CHAPTER RAIL ACTIVE STATE ============ */
+const railLinks = document.querySelectorAll('.rail a');
+document.querySelectorAll('.chapter').forEach((ch, i) => {
+  ScrollTrigger.create({
+    trigger: ch, start: 'top center', end: 'bottom center',
+    onToggle(self){ railLinks[i]?.classList.toggle('is-active', self.isActive); }
+  });
+});
+</script>
+</body>
+</html>
