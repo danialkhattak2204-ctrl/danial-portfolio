@@ -572,6 +572,110 @@ body.is-loading{ overflow: hidden; }
   .col__inner{ animation:none; }
 }
 
+/* ============ shared section title (Phase 5+) ============ */
+.sec-title{
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" 85, "wght" 900;
+  font-size: clamp(34px, 5vw, 84px);
+  line-height: .98; text-transform: uppercase; letter-spacing: -.01em;
+  margin-top: 14px;
+}
+.sec-title em{
+  font-style: normal;
+  background: var(--grad);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+
+/* ============ 05 · EXPERIENCE — the timeline drift (Phase 5) ============ */
+.xp{ display:block; min-height:auto; padding-top: 16vh; padding-bottom: 10vh; border-bottom:none; }
+.xp__wrap{ position:relative; max-width: 1100px; margin: 8vh auto 0; }
+.xp__beam{
+  position:absolute; left:50%; top:0; bottom:0; width:2px;
+  transform: translateX(-50%);
+  background: var(--white-10);
+}
+.xp__beam i{
+  display:block; width:100%; height:100%;
+  background: var(--grad);
+  transform: scaleY(0); transform-origin: 50% 0;
+  box-shadow: 0 0 18px var(--glow-blue);
+}
+.xcard{
+  position:relative;
+  width: calc(50% - 46px);
+  padding: 20px 24px;
+  margin-bottom: 36px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid var(--white-10);
+  border-radius: 12px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  will-change: transform;
+  transition: border-color .35s var(--ease-out), box-shadow .35s var(--ease-out);
+}
+.xcard:hover{
+  border-color: rgba(46,107,255,.55);
+  box-shadow: 0 0 34px var(--glow-blue), 0 0 60px var(--glow-purple);
+}
+.xcard--r{ margin-left: auto; }
+.xcard::before{
+  content:""; position:absolute; top: 26px;
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--electric);
+  box-shadow: 0 0 12px var(--glow-blue);
+}
+.xcard:not(.xcard--r)::before{ right: -52px; }
+.xcard--r::before{ left: -52px; }
+.xcard__role{ font-weight: 500; font-size: clamp(15px, 1.35vw, 18px); color: var(--white); }
+.xcard__co{ margin-top: 3px; color: var(--white-60); font-size: 14px; }
+.xcard__meta{
+  display:flex; align-items:center; gap: 12px; flex-wrap: wrap;
+  margin-top: 12px;
+  font-family: var(--font-mono); font-size: 10px;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--white-30);
+}
+.xcard .tag{
+  padding: 3px 9px; border-radius: 999px;
+  border: 1px solid rgba(46,107,255,.45);
+  color: var(--electric); letter-spacing: .12em;
+}
+@media (max-width: 880px){
+  .xp__beam{ left: 12px; transform:none; }
+  .xcard, .xcard--r{ width: auto; margin-left: 42px; }
+  .xcard:not(.xcard--r)::before, .xcard--r::before{ left: -37px; right: auto; }
+}
+
+/* ============ 06 · SKILLS — the toolfield (Phase 5) ============ */
+.tools{ display:block; min-height:auto; padding-top: 14vh; padding-bottom: 14vh; text-align:center; border-bottom:none; }
+.toolfield{
+  position: relative;
+  height: min(60vh, 540px);
+  margin-top: 7vh;
+}
+.chip{
+  position:absolute; top:0; left:0;
+  padding: 10px 18px; border-radius: 999px;
+  border: 1px solid var(--white-10);
+  background: rgba(255,255,255,.03);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  font-family: var(--font-mono); font-size: 12px;
+  letter-spacing: .08em; color: var(--white-60);
+  white-space: nowrap; will-change: transform;
+  transition: color .3s, border-color .3s, box-shadow .3s;
+}
+.chip.is-hot{
+  color: var(--white);
+  border-color: rgba(168,85,247,.6);
+  box-shadow: 0 0 22px var(--glow-blue), 0 0 40px var(--glow-purple);
+}
+/* mobile / reduced-motion fallback: chips as a wrapped cloud */
+.toolcloud{
+  display:flex; flex-wrap:wrap; justify-content:center; gap: 10px;
+  margin-top: 6vh; padding: 0 var(--gutter);
+}
+.toolcloud .chip{ position:static; }
+
 /* ============ FOOTER STRIP ============ */
 .foot{
   display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap;
@@ -690,7 +794,7 @@ body.is-loading{ overflow: hidden; }
         <h2 class="about__quote">The craft came first. <em>The machine</em> came later.</h2>
         <div class="about__body">
           <p>Six years designing across the whole surface of a brand — product UI, packaging, campaigns, motion, apparel — from startup war rooms to Delivery Hero's foodpanda, and now as Visual Designer at APIMatic, where developer tools meet marketing craft.</p>
-          <p>Today I work AI-first: Midjourney, Firefly and Runway sit beside Figma in my toolbar. The tools generate at machine speed; taste decides what ships. Faster exploration, sharper instincts — work neither of us could make alone.</p>
+          <p>Today I work AI-first: Claude, PixVerse and ImagineArt sit beside Figma in my toolbar. The tools generate at machine speed; taste decides what ships. Faster exploration, sharper instincts — work neither of us could make alone.</p>
         </div>
         <div class="about__stats">
           <div class="stat"><div class="stat__num" data-count="80" data-suffix="+">0</div><div class="stat__lbl">Projects shipped</div></div>
@@ -769,18 +873,70 @@ body.is-loading{ overflow: hidden; }
   </div>
 </section>
 
-<!-- ============ 05 · EXPERIENCE ============ -->
-<section class="chapter" id="experience">
+<!-- ============ 05 · EXPERIENCE — the timeline drift ============ -->
+<section class="chapter xp" id="experience">
   <span class="chapter__ghost" aria-hidden="true">05</span>
-  <p class="chapter__label">05 · The Timeline Drift — Phase 5</p>
-  <p class="chapter__note">Glass cards + gradient beam drawing down the career line.</p>
+  <p class="chapter__label">05 · Experience</p>
+  <h2 class="sec-title">The journey<br>so far</h2>
+  <div class="xp__wrap">
+    <div class="xp__beam" aria-hidden="true"><i id="xpBeam"></i></div>
+
+    <article class="xcard">
+      <p class="xcard__role">Senior Visual Designer</p>
+      <p class="xcard__co">APIMatic</p>
+      <p class="xcard__meta"><span>Mar 2026 — Now</span><span>Islamabad, PK</span></p>
+    </article>
+
+    <article class="xcard xcard--r">
+      <p class="xcard__role">Assistant Manager Web &amp; Graphic Designer</p>
+      <p class="xcard__co">Riphah International University</p>
+      <p class="xcard__meta"><span>Sep 2025 — Mar 2026</span><span>Islamabad, PK</span></p>
+    </article>
+
+    <article class="xcard">
+      <p class="xcard__role">Senior Creative Designer</p>
+      <p class="xcard__co">Nexera Design Group</p>
+      <p class="xcard__meta"><span>Apr 2025 — Aug 2025</span><span>New York, USA</span><span class="tag">Remote — USA</span></p>
+    </article>
+
+    <article class="xcard xcard--r">
+      <p class="xcard__role">Game UI Designer</p>
+      <p class="xcard__co">Ilham Inc</p>
+      <p class="xcard__meta"><span>Feb 2025 — Jun 2025</span><span>Richmond, USA</span><span class="tag">Remote — USA</span><span class="tag">Freelance</span></p>
+    </article>
+
+    <article class="xcard">
+      <p class="xcard__role">UX Designer</p>
+      <p class="xcard__co">Moogle Studio</p>
+      <p class="xcard__meta"><span>May 2023 — Jun 2025</span><span>Islamabad, PK</span><span class="tag">Freelance</span></p>
+    </article>
+
+    <article class="xcard xcard--r">
+      <p class="xcard__role">Creative Graphic Designer</p>
+      <p class="xcard__co">foodpanda — Delivery Hero</p>
+      <p class="xcard__meta"><span>May 2021 — Dec 2024</span><span>Islamabad, PK</span></p>
+    </article>
+
+    <article class="xcard">
+      <p class="xcard__role">Founder &amp; Creative Designer</p>
+      <p class="xcard__co">Vestium Attire — own clothing brand</p>
+      <p class="xcard__meta"><span>Mar 2020 — Nov 2021</span><span>Islamabad, PK</span></p>
+    </article>
+
+    <article class="xcard xcard--r">
+      <p class="xcard__role">Graphic &amp; Web Designer</p>
+      <p class="xcard__co">Planet IE Coworking &amp; Incubation Center</p>
+      <p class="xcard__meta"><span>Nov 2019 — Jun 2020</span><span>Islamabad, PK</span></p>
+    </article>
+  </div>
 </section>
 
-<!-- ============ 06 · SKILLS ============ -->
-<section class="chapter" id="skills">
+<!-- ============ 06 · SKILLS — the toolfield ============ -->
+<section class="chapter tools" id="skills">
   <span class="chapter__ghost" aria-hidden="true">06</span>
-  <p class="chapter__label">06 · The Toolfield — Phase 5</p>
-  <p class="chapter__note">Floating magnetic chips. Tools are prompts; taste is the model.</p>
+  <p class="chapter__label">06 · Toolkit</p>
+  <h2 class="sec-title">Tools are prompts.<br><em>Taste</em> is the model.</h2>
+  <div class="toolfield" id="toolfield" aria-label="Tools and skills"></div>
 </section>
 
 <!-- ============ 07 · CONTACT ============ -->
@@ -1232,6 +1388,125 @@ if (!reduceMotion){
         .fromTo(marq, { filter: 'blur(12px)', opacity: .35 }, { filter: 'blur(0px)', opacity: 1, ease: 'none' })
         .to(marq, { filter: 'blur(12px)', opacity: .35, ease: 'none' });
     });
+  });
+}
+
+/* ============================================================
+   PHASE 5A · EXPERIENCE — beam draw + card drift + hover tilt
+   ============================================================ */
+if (!reduceMotion){
+  /* gradient beam draws down the career line as you scroll */
+  gsap.to('#xpBeam', {
+    scaleY: 1, ease: 'none',
+    scrollTrigger: { trigger: '.xp__wrap', start: 'top 72%', end: 'bottom 55%', scrub: 0.4 }
+  });
+
+  /* cards drift in from their side of the beam */
+  document.querySelectorAll('.xcard').forEach(card => {
+    const fromRight = card.classList.contains('xcard--r');
+    gsap.from(card, {
+      x: fromRight ? 70 : -70, opacity: 0, rotateY: fromRight ? -6 : 6,
+      duration: 1.1, ease: 'expo.out',
+      scrollTrigger: { trigger: card, start: 'top 86%' }
+    });
+    /* subtle 3D tilt toward cursor */
+    if (finePointer){
+      card.addEventListener('mousemove', (e) => {
+        const r = card.getBoundingClientRect();
+        const nx = ((e.clientX - r.left) / r.width) - .5;
+        const ny = ((e.clientY - r.top) / r.height) - .5;
+        gsap.to(card, { rotateY: nx * 5, rotateX: -ny * 5, transformPerspective: 800, duration: .6, ease: 'power2.out' });
+      });
+      card.addEventListener('mouseleave', () => {
+        gsap.to(card, { rotateY: 0, rotateX: 0, duration: .8, ease: 'power2.out' });
+      });
+    }
+  });
+}
+
+/* ============================================================
+   PHASE 5B · TOOLFIELD — floating magnetic chips
+   Desktop fine-pointer: physics field. Otherwise: static cloud.
+   ============================================================ */
+const TOOLS = [
+  'Figma', 'Illustrator', 'Photoshop', 'After Effects', 'Premiere',
+  'Framer', 'Claude AI', 'PixVerse', 'ImagineArt', 'HTML / CSS',
+  'GSAP', 'HubSpot CMS', 'Lottie', 'Design Systems', 'Photography'
+];
+const toolfield = document.getElementById('toolfield');
+const usePhysics = !reduceMotion && finePointer && window.matchMedia('(min-width: 881px)').matches;
+
+if (!usePhysics){
+  /* fallback: wrapped chip cloud, zero motion cost */
+  toolfield.classList.add('toolcloud');
+  toolfield.style.height = 'auto';
+  TOOLS.forEach(t => {
+    const c = document.createElement('span');
+    c.className = 'chip'; c.textContent = t;
+    toolfield.appendChild(c);
+  });
+} else {
+  const chips = [];
+  const fMouse = { x: -9999, y: -9999 };
+  let fieldOn = false, t = 0;
+
+  /* home positions: 5-column grid with organic jitter, stored as fractions */
+  TOOLS.forEach((name, i) => {
+    const el = document.createElement('span');
+    el.className = 'chip'; el.textContent = name;
+    toolfield.appendChild(el);
+    chips.push({
+      el,
+      fx: (0.5 + (i % 5)) / 5 + (Math.random() - .5) * .06,   /* x fraction */
+      fy: (0.5 + Math.floor(i / 5)) / Math.ceil(TOOLS.length / 5) + (Math.random() - .5) * .1,
+      ph: Math.random() * Math.PI * 2,
+      sp: .35 + Math.random() * .4,
+      x: 0, y: 0
+    });
+  });
+
+  function layoutField(){
+    const r = toolfield.getBoundingClientRect();
+    chips.forEach(c => {
+      c.hx = c.fx * r.width;
+      c.hy = c.fy * r.height;
+    });
+  }
+  layoutField();
+  window.addEventListener('resize', layoutField);
+
+  toolfield.addEventListener('mousemove', (e) => {
+    const r = toolfield.getBoundingClientRect();
+    fMouse.x = e.clientX - r.left; fMouse.y = e.clientY - r.top;
+  });
+  toolfield.addEventListener('mouseleave', () => { fMouse.x = -9999; fMouse.y = -9999; });
+
+  gsap.ticker.add((time, dt) => {
+    if (!fieldOn) return;
+    t += dt * 0.001;
+    const R = 150; /* magnetic radius */
+    chips.forEach(c => {
+      /* ambient drift around home */
+      let x = c.hx + Math.sin(t * c.sp + c.ph) * 16 - c.el.offsetWidth / 2;
+      let y = c.hy + Math.cos(t * c.sp * .8 + c.ph) * 12 - c.el.offsetHeight / 2;
+      /* magnetic pull toward nearby cursor */
+      const cx = x + c.el.offsetWidth / 2, cy = y + c.el.offsetHeight / 2;
+      const dx = fMouse.x - cx, dy = fMouse.y - cy;
+      const d = Math.hypot(dx, dy);
+      const hot = d < R;
+      if (hot){
+        const f = (1 - d / R) * .45;
+        x += dx * f; y += dy * f;
+      }
+      c.el.classList.toggle('is-hot', hot);
+      c.el.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0)';
+    });
+  });
+
+  /* run only while on screen */
+  ScrollTrigger.create({
+    trigger: '#skills', start: 'top bottom', end: 'bottom top',
+    onToggle(self){ fieldOn = self.isActive; }
   });
 }
 
