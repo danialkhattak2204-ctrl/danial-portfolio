@@ -356,6 +356,222 @@ body.is-loading{ overflow: hidden; }
   .about__portrait{ max-width: 340px; }
 }
 
+/* ============ 04 · WORK — the gallery passage (Phase 4) ============ */
+.work{ padding: 0; border-bottom: none; display: block; min-height: 0; }
+.work__viewport{ position: relative; height: 100vh; overflow: hidden; }
+.work__head{
+  position: absolute; top: 88px; left: var(--gutter); z-index: 5;
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: .18em; text-transform: uppercase;
+  color: var(--white-30);
+}
+.work__progress{
+  position: absolute; bottom: 28px; left: var(--gutter); right: var(--gutter);
+  height: 1px; background: var(--white-10); z-index: 5;
+}
+.work__progress i{
+  display: block; height: 100%;
+  background: var(--grad);
+  transform: scaleX(0); transform-origin: 0 50%;
+}
+.work__track{ display: flex; height: 100%; will-change: transform; }
+.work-slide{
+  flex: 0 0 100vw; height: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+  gap: clamp(24px, 4vw, 64px);
+  align-items: center;
+  padding: 13vh var(--gutter) 9vh;
+}
+.work-slide__meta{ position: relative; z-index: 2; }
+.work-slide__idx{
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: .18em; color: var(--white-30);
+}
+.work-slide__title{
+  margin-top: 14px;
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" 85, "wght" 900;
+  font-size: clamp(38px, 5.4vw, 92px);
+  line-height: .95; text-transform: uppercase;
+  will-change: transform, font-variation-settings;
+}
+.work-slide__desc{
+  margin-top: 18px; max-width: 34ch;
+  color: var(--white-60); font-size: clamp(14px, 1.15vw, 17px); line-height: 1.6;
+}
+.work-slide__link{
+  display: inline-block; margin-top: 26px;
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: .16em; text-transform: uppercase;
+  color: var(--white); text-decoration: none;
+  padding-bottom: 6px;
+  background: var(--grad) no-repeat 0 100% / 0% 1px;
+  transition: background-size .5s var(--ease-out);
+}
+.work-slide__link:hover, .work-slide__link:focus-visible{ background-size: 100% 1px; }
+.work-slide__gallery{
+  position: relative; height: 80vh;
+  display: flex; gap: clamp(12px, 1.6vw, 22px);
+  overflow: hidden;
+  mask-image: linear-gradient(180deg, transparent, #000 9%, #000 91%, transparent);
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 9%, #000 91%, transparent);
+}
+.wcol-wrap{ flex: 1; overflow: hidden; }
+.wcol-wrap--near{ transform: scale(1.05); }   /* depth inside the marquee (L+1 nuance) */
+.wcol-wrap--far{ transform: scale(.95); }
+.wcol{
+  display: flex; flex-direction: column;
+  gap: clamp(12px, 1.6vw, 22px);
+  width: 100%;
+  animation: col-up var(--dur, 30s) linear infinite;
+  will-change: transform;
+}
+.wcol--rev{ animation-name: col-down; }
+@keyframes col-up{   from{ transform: translateY(0); }    to{ transform: translateY(-50%); } }
+@keyframes col-down{ from{ transform: translateY(-50%); } to{ transform: translateY(0); } }
+.wtile{
+  flex: 0 0 auto;
+  border-radius: 8px;
+  border: 1px solid var(--white-10);
+  overflow: hidden;
+  background: var(--void-2);
+}
+.wtile--p{ aspect-ratio: 3/4; } .wtile--l{ aspect-ratio: 4/3; } .wtile--s{ aspect-ratio: 1/1; }
+.wtile img{
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  transition: transform .6s var(--ease-out);
+}
+.wtile:hover img{ transform: scale(1.05); }
+
+/* stacked fallback: mobile AND reduced motion share it */
+@media (max-width: 880px), (prefers-reduced-motion: reduce){
+  .work__viewport{ height: auto; overflow: visible; }
+  .work__head{ position: static; padding: 80px var(--gutter) 0; }
+  .work__progress{ display: none; }
+  .work__track{ flex-direction: column; height: auto; }
+  .work-slide{
+    flex-basis: auto; height: auto;
+    grid-template-columns: 1fr;
+    gap: 26px; padding: 8vh var(--gutter);
+  }
+  .work-slide__gallery{
+    height: auto; flex-direction: column;
+    mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  }
+  .wcol-wrap{ transform: none; }
+  .wcol-wrap--far{ display: none; }                 /* two rows are enough on mobile */
+  .wcol{ flex-direction: row; width: max-content; animation-name: row-left; }
+  .wcol--rev{ animation-name: row-right; }
+  .wtile{ width: 46vw; }
+  .wtile--p{ width: 38vw; }
+  @keyframes row-left{  from{ transform: translateX(0); }    to{ transform: translateX(-50%); } }
+  @keyframes row-right{ from{ transform: translateX(-50%); } to{ transform: translateX(0); } }
+}
+@media (prefers-reduced-motion: reduce){
+  .wcol{ animation: none; }
+}
+
+/* ============ 04 · WORK — the gallery passage (Phase 4) ============ */
+.work{ display:block; padding:0; border-bottom:none; min-height:auto; overflow:hidden; }
+.work__pin{ position:relative; height:100vh; overflow:hidden; }
+.work__head{
+  position:absolute; top:0; left:0; right:0; z-index:5;
+  display:flex; justify-content:space-between; align-items:baseline;
+  padding: 92px var(--gutter) 0;
+  pointer-events:none;
+}
+.work__label{
+  font-family: var(--font-mono); font-size:11px;
+  letter-spacing:.18em; text-transform:uppercase; color: var(--white-30);
+}
+.work__index{
+  font-family: var(--font-mono); font-size:11px;
+  letter-spacing:.18em; color: var(--white-60);
+}
+.work__bar{
+  position:absolute; top:118px; left:var(--gutter); right:var(--gutter); z-index:5;
+  height:1px; background: var(--white-10);
+}
+.work__bar i{
+  display:block; height:100%; background: var(--grad);
+  transform: scaleX(0); transform-origin: 0 50%;
+}
+.work__track{ display:flex; height:100%; will-change:transform; }
+.slide{
+  flex: 0 0 100vw; height:100%;
+  display:grid; grid-template-columns: minmax(0,4fr) minmax(0,7fr);
+  gap: 4vw; align-items:center;
+  padding: 0 var(--gutter);
+  perspective: 1100px;
+  overflow:hidden;
+}
+.slide__info{ will-change: transform, opacity; transform-style: preserve-3d; position:relative; z-index:2; }
+.slide__idx{
+  font-family: var(--font-mono); font-size:12px;
+  letter-spacing:.2em; color: var(--white-30);
+}
+.slide__title{
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" 85, "wght" 900;
+  font-size: clamp(38px, 6.2vw, 104px);
+  line-height:.95; text-transform:uppercase; letter-spacing:-.01em;
+  margin: 14px 0 16px;
+  will-change: font-variation-settings;
+}
+.slide__desc{ color: var(--white-60); font-size: clamp(14px,1.2vw,17px); max-width:34ch; line-height:1.6; }
+.slide__link{
+  display:inline-block; margin-top:26px;
+  font-family: var(--font-mono); font-size:11px;
+  letter-spacing:.18em; text-transform:uppercase;
+  color: var(--white); text-decoration:none;
+  border-bottom:1px solid var(--white-30);
+  padding-bottom:4px;
+  transition: border-color .3s var(--ease-out);
+}
+.slide__link:hover, .slide__link:focus-visible{ border-image: var(--grad) 1; }
+.slide__marquee{
+  display:grid; grid-template-columns: repeat(3, 1fr);
+  gap: clamp(10px, 1.4vw, 20px);
+  height:100vh; overflow:hidden;
+  will-change: filter, opacity;
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 12%, #000 88%, transparent);
+  mask-image: linear-gradient(180deg, transparent, #000 12%, #000 88%, transparent);
+}
+.col{ overflow:hidden; }
+.col--a{ transform: scale(.94); }   /* depth inside the marquee */
+.col--b{ transform: scale(1.06); }
+.col__inner{ display:flex; flex-direction:column; animation: mq-v var(--dur, 30s) linear infinite; will-change: transform; }
+.col--b .col__inner{ animation-direction: reverse; }
+.set{ display:flex; flex-direction:column; gap: clamp(10px,1.4vw,20px); padding-bottom: clamp(10px,1.4vw,20px); }
+.col__inner img, .col__inner video{
+  width:100%; height:auto; display:block;
+  border-radius:8px; border:1px solid var(--white-10);
+}
+@keyframes mq-v{ to{ transform: translateY(-50%); } }
+@keyframes mq-h{ to{ transform: translateX(-50%); } }
+
+@media (max-width: 880px){
+  .work__pin{ height:auto; }
+  .work__head{ position:static; padding: 72px var(--gutter) 0; }
+  .work__bar{ display:none; }
+  .work__track{ display:block; }
+  .slide{ display:block; height:auto; padding: 8vh var(--gutter) 2vh; }
+  .slide__marquee{
+    display:block; height:auto; margin-top:22px;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  }
+  .col{ margin-bottom:10px; transform:none !important; }
+  .col__inner{ flex-direction:row; width:max-content; animation-name: mq-h; }
+  .set{ flex-direction:row; padding-bottom:0; padding-right:10px; gap:10px; }
+  .col__inner img, .col__inner video{ height:124px; width:auto; }
+}
+@media (prefers-reduced-motion: reduce){
+  .col__inner{ animation:none; }
+}
+
 /* ============ FOOTER STRIP ============ */
 .foot{
   display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap;
@@ -486,11 +702,71 @@ body.is-loading{ overflow: hidden; }
   </div>
 </section>
 
-<!-- ============ 04 · WORK ============ -->
-<section class="chapter" id="work">
-  <span class="chapter__ghost" aria-hidden="true">04</span>
-  <p class="chapter__label">04 · The Gallery Passage — pinned horizontal build is Phase 4</p>
-  <p class="chapter__note">Six category slides with infinite marquee columns. This block will grow to ~400vh of pinned scroll.</p>
+<!-- ============ 04 · WORK — the gallery passage ============ -->
+<section class="chapter work" id="work">
+  <div class="work__pin">
+    <header class="work__head">
+      <span class="work__label">04 · Selected Work</span>
+      <span class="work__index" id="workIndex">01 / 06</span>
+    </header>
+    <div class="work__bar" aria-hidden="true"><i id="workBar"></i></div>
+    <div class="work__track" id="workTrack">
+      <article class="slide" data-cat="uiux">
+        <div class="slide__info">
+          <p class="slide__idx">01 / 06</p>
+          <h3 class="slide__title">UI/UX</h3>
+          <p class="slide__desc">Interfaces, design systems and product flows — screens people actually enjoy using.</p>
+          <a class="slide__link" href="https://www.behance.net/danny_DUMvisuals" target="_blank" rel="noopener">Explore →</a>
+        </div>
+        <div class="slide__marquee" aria-hidden="true"></div>
+      </article>
+      <article class="slide" data-cat="foodpanda">
+        <div class="slide__info">
+          <p class="slide__idx">02 / 06</p>
+          <h3 class="slide__title">foodpanda</h3>
+          <p class="slide__desc">Brand &amp; campaign creative at scale — in-house with Delivery Hero.</p>
+          <a class="slide__link" href="https://www.behance.net/danny_DUMvisuals" target="_blank" rel="noopener">Explore →</a>
+        </div>
+        <div class="slide__marquee" aria-hidden="true"></div>
+      </article>
+      <article class="slide" data-cat="packaging">
+        <div class="slide__info">
+          <p class="slide__idx">03 / 06</p>
+          <h3 class="slide__title">Packaging</h3>
+          <p class="slide__desc">Boxes, labels and shelf presence — design you can hold.</p>
+          <a class="slide__link" href="https://www.behance.net/danny_DUMvisuals" target="_blank" rel="noopener">Explore →</a>
+        </div>
+        <div class="slide__marquee" aria-hidden="true"></div>
+      </article>
+      <article class="slide" data-cat="social">
+        <div class="slide__info">
+          <p class="slide__idx">04 / 06</p>
+          <h3 class="slide__title">Social</h3>
+          <p class="slide__desc">Campaigns, carousels and ad creative built to stop the scroll.</p>
+          <a class="slide__link" href="https://www.behance.net/danny_DUMvisuals" target="_blank" rel="noopener">Explore →</a>
+        </div>
+        <div class="slide__marquee" aria-hidden="true"></div>
+      </article>
+      <article class="slide" data-cat="apparel">
+        <div class="slide__info">
+          <p class="slide__idx">05 / 06</p>
+          <h3 class="slide__title">Apparel</h3>
+          <p class="slide__desc">Hoodie art and wearable graphics — streetwear energy, brand discipline.</p>
+          <a class="slide__link" href="https://www.behance.net/danny_DUMvisuals" target="_blank" rel="noopener">Explore →</a>
+        </div>
+        <div class="slide__marquee" aria-hidden="true"></div>
+      </article>
+      <article class="slide" data-cat="motion">
+        <div class="slide__info">
+          <p class="slide__idx">06 / 06</p>
+          <h3 class="slide__title">Motion</h3>
+          <p class="slide__desc">Frames in motion, moments in stills — animation and photography.</p>
+          <a class="slide__link" href="https://www.behance.net/danny_DUMvisuals" target="_blank" rel="noopener">Explore →</a>
+        </div>
+        <div class="slide__marquee" aria-hidden="true"></div>
+      </article>
+    </div>
+  </div>
 </section>
 
 <!-- ============ 05 · EXPERIENCE ============ -->
@@ -829,6 +1105,128 @@ document.querySelectorAll('.stat__num').forEach(el => {
     onUpdate(){ el.textContent = Math.round(o.v) + suffix; }
   });
 });
+
+/* ============================================================
+   PHASE 4 · WORK — gallery passage
+   Swap real images by replacing files in assets/work/ with the
+   same names, or change `count` when a category has more shots.
+   `videos: [n, …]` marks which slots are .mp4 loops instead of
+   .webp images (e.g. motion-3.mp4 → videos: [3]).
+   ============================================================ */
+const WORK = [
+  { id: 'uiux',      count: 6 },
+  { id: 'foodpanda', count: 6 },
+  { id: 'packaging', count: 6 },
+  { id: 'social',    count: 6 },
+  { id: 'apparel',   count: 6 },
+  { id: 'motion',    count: 6, videos: [] }   /* e.g. videos: [1, 4] once the MP4s are in */
+];
+const COL_DURS = [34, 42, 28]; // seconds per loop — col b runs reversed
+
+/* build 3 depth-scaled marquee columns per slide, images round-robin, sets duplicated for a seamless loop */
+WORK.forEach(cat => {
+  const marquee = document.querySelector('.slide[data-cat="' + cat.id + '"] .slide__marquee');
+  if (!marquee) return;
+  const vids = cat.videos || [];
+  const buckets = [[], [], []];
+  for (let n = 1; n <= cat.count; n++){
+    const isVid = vids.includes(n);
+    buckets[(n - 1) % 3].push({
+      src: 'assets/work/' + cat.id + '-' + n + (isVid ? '.mp4' : '.webp'),
+      video: isVid
+    });
+  }
+  ['a', 'b', 'c'].forEach((k, i) => {
+    const col = document.createElement('div');
+    col.className = 'col col--' + k;
+    const inner = document.createElement('div');
+    inner.className = 'col__inner';
+    inner.style.setProperty('--dur', COL_DURS[i] + 's');
+    for (let dup = 0; dup < 2; dup++){
+      const set = document.createElement('div');
+      set.className = 'set';
+      buckets[i].forEach(item => {
+        let el;
+        if (item.video){
+          el = document.createElement('video');
+          el.muted = true; el.loop = true; el.playsInline = true;
+          el.autoplay = true; el.preload = 'metadata';
+          el.setAttribute('muted', '');       /* iOS needs the attribute too */
+          el.src = item.src;
+        } else {
+          el = document.createElement('img');
+          el.src = item.src; el.alt = ''; el.loading = 'lazy';
+        }
+        set.appendChild(el);
+      });
+      inner.appendChild(set);
+    }
+    col.appendChild(inner);
+    marquee.appendChild(col);
+  });
+});
+
+/* video tiles only run while the work section is on screen */
+ScrollTrigger.create({
+  trigger: '#work', start: 'top bottom', end: 'bottom top',
+  onToggle(self){
+    document.querySelectorAll('.slide__marquee video').forEach(v => {
+      self.isActive ? v.play().catch(() => {}) : v.pause();
+    });
+  }
+});
+
+/* desktop: pin + horizontal travel + per-slide choreography */
+if (!reduceMotion){
+  const mmWork = gsap.matchMedia();
+  mmWork.add('(min-width: 881px)', () => {
+    const track = document.getElementById('workTrack');
+    const dist = () => track.scrollWidth - window.innerWidth;
+
+    const horiz = gsap.to(track, {
+      x: () => -dist(), ease: 'none',
+      scrollTrigger: {
+        trigger: '#work', start: 'top top',
+        end: () => '+=' + dist() * 1.15,   /* ×1.15 = slower, more cinematic travel */
+        pin: true, scrub: 0.5,
+        anticipatePin: 1, invalidateOnRefresh: true,
+        onUpdate(self){
+          gsap.set('#workBar', { scaleX: self.progress });
+          const idx = Math.min(5, Math.floor(self.progress * 6));
+          document.getElementById('workIndex').textContent = '0' + (idx + 1) + ' / 06';
+        }
+      }
+    });
+
+    document.querySelectorAll('.slide').forEach(slide => {
+      const info  = slide.querySelector('.slide__info');
+      const title = slide.querySelector('.slide__title');
+      const marq  = slide.querySelector('.slide__marquee');
+
+      /* info card: tilts in from +16°, flat at center, tilts out to −16° */
+      gsap.timeline({ scrollTrigger: {
+          trigger: slide, containerAnimation: horiz,
+          start: 'left 90%', end: 'right 10%', scrub: 0.4 } })
+        .fromTo(info, { rotateY: 16, opacity: .2, x: 60 }, { rotateY: 0, opacity: 1, x: 0, ease: 'none' })
+        .to(info, { rotateY: -16, opacity: .2, x: -60, ease: 'none' });
+
+      /* title breathes: wdth 85 → 112 → 85 across its passage */
+      gsap.timeline({ scrollTrigger: {
+          trigger: slide, containerAnimation: horiz,
+          start: 'left 90%', end: 'right 10%', scrub: 0.4 } })
+        .fromTo(title, { fontVariationSettings: '"wdth" 85, "wght" 900' },
+                       { fontVariationSettings: '"wdth" 112, "wght" 900', ease: 'none' })
+        .to(title, { fontVariationSettings: '"wdth" 85, "wght" 900', ease: 'none' });
+
+      /* marquee RESOLVE: blurred at the edges, sharp through the middle */
+      gsap.timeline({ scrollTrigger: {
+          trigger: slide, containerAnimation: horiz,
+          start: 'left 82%', end: 'right 18%', scrub: 0.4 } })
+        .fromTo(marq, { filter: 'blur(12px)', opacity: .35 }, { filter: 'blur(0px)', opacity: 1, ease: 'none' })
+        .to(marq, { filter: 'blur(12px)', opacity: .35, ease: 'none' });
+    });
+  });
+}
 
 /* ============ SCROLL PROGRESS LINE ============ */
 gsap.to('.progress', {
