@@ -1119,7 +1119,7 @@ const WORK = [
   { id: 'packaging', count: 6 },
   { id: 'social',    count: 6 },
   { id: 'apparel',   count: 6 },
-  { id: 'motion',    count: 6, videos: [1, 2, 3, 4] }   /* e.g. videos: [1, 4] once the MP4s are in */
+  { id: 'motion',    count: 6, videos: [1, 2, 3, 4] }
 ];
 const COL_DURS = [34, 42, 28]; // seconds per loop — col b runs reversed
 
@@ -1150,9 +1150,10 @@ WORK.forEach(cat => {
         if (item.video){
           el = document.createElement('video');
           el.muted = true; el.loop = true; el.playsInline = true;
-          el.autoplay = true; el.preload = 'metadata';
+          el.autoplay = true; el.preload = 'auto';
           el.setAttribute('muted', '');       /* iOS needs the attribute too */
           el.src = item.src;
+          el.addEventListener('canplay', () => { el.play().catch(() => {}); }, { once: true });
         } else {
           el = document.createElement('img');
           el.src = item.src; el.alt = ''; el.loading = 'lazy';
@@ -1167,14 +1168,20 @@ WORK.forEach(cat => {
 });
 
 /* video tiles only run while the work section is on screen */
+function playWorkVideos(){
+  document.querySelectorAll('.slide__marquee video').forEach(v => { v.play().catch(() => {}); });
+}
 ScrollTrigger.create({
   trigger: '#work', start: 'top bottom', end: 'bottom top',
   onToggle(self){
-    document.querySelectorAll('.slide__marquee video').forEach(v => {
-      self.isActive ? v.play().catch(() => {}) : v.pause();
-    });
+    self.isActive
+      ? playWorkVideos()
+      : document.querySelectorAll('.slide__marquee video').forEach(v => v.pause());
   }
 });
+/* fallback: battery-saver / strict-autoplay browsers unlock playback on first user gesture */
+['pointerdown', 'touchstart', 'keydown', 'wheel'].forEach(evt =>
+  window.addEventListener(evt, playWorkVideos, { once: true, passive: true }));
 
 /* desktop: pin + horizontal travel + per-slide choreography */
 if (!reduceMotion){
