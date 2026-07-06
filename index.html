@@ -653,7 +653,8 @@ body.is-loading{ overflow: hidden; }
 }
 .chip{
   position:absolute; top:0; left:0;
-  padding: 10px 18px; border-radius: 999px;
+  display:inline-flex; align-items:center; gap: 10px;
+  padding: 8px 18px 8px 9px; border-radius: 999px;
   border: 1px solid var(--white-10);
   background: rgba(255,255,255,.03);
   backdrop-filter: blur(10px);
@@ -662,6 +663,20 @@ body.is-loading{ overflow: hidden; }
   letter-spacing: .08em; color: var(--white-60);
   white-space: nowrap; will-change: transform;
   transition: color .3s, border-color .3s, box-shadow .3s;
+}
+.chip .tile{
+  width: 26px; height: 26px; border-radius: 7px;
+  display:flex; align-items:center; justify-content:center;
+  font-style: normal; font-weight: 700; font-size: 10px;
+  letter-spacing: 0;
+  color: var(--tc);
+  background: color-mix(in srgb, var(--tc) 15%, transparent);
+  border: 1px solid color-mix(in srgb, var(--tc) 35%, transparent);
+  flex: 0 0 auto;
+}
+.chip.is-hot .tile{
+  background: color-mix(in srgb, var(--tc) 28%, transparent);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--tc) 45%, transparent);
 }
 .chip.is-hot{
   color: var(--white);
@@ -1634,10 +1649,35 @@ if (!reduceMotion){
    Desktop fine-pointer: physics field. Otherwise: static cloud.
    ============================================================ */
 const TOOLS = [
-  'Figma', 'Illustrator', 'Photoshop', 'After Effects', 'Premiere',
-  'Framer', 'Claude AI', 'PixVerse', 'ImagineArt', 'HTML / CSS',
-  'GSAP', 'HubSpot CMS', 'Lottie', 'Design Systems', 'Photography'
+  { n: 'Figma',          t: 'Fi',  c: '#F24E1E' },
+  { n: 'Illustrator',    t: 'Ai',  c: '#FF9A00' },
+  { n: 'Photoshop',      t: 'Ps',  c: '#31A8FF' },
+  { n: 'After Effects',  t: 'Ae',  c: '#9999FF' },
+  { n: 'Premiere',       t: 'Pr',  c: '#EA77FF' },
+  { n: 'Framer',         t: 'Fr',  c: '#0099FF' },
+  { n: 'Claude AI',      t: 'C✳',  c: '#D97757' },
+  { n: 'PixVerse',       t: 'Px',  c: '#00E5C3' },
+  { n: 'ImagineArt',     t: 'Im',  c: '#8B5CF6' },
+  { n: 'HTML / CSS',     t: '</>', c: '#E34F26' },
+  { n: 'GSAP',           t: 'GS',  c: '#88CE02' },
+  { n: 'HubSpot CMS',    t: 'Hs',  c: '#FF7A59' },
+  { n: 'Lottie',         t: 'Lo',  c: '#00DDB3' },
+  { n: 'Design Systems', t: 'Ds',  c: '#2E6BFF' },
+  { n: 'Photography',    t: 'Ph',  c: '#E8E4DA' }
 ];
+function makeChip(tool){
+  const chip = document.createElement('span');
+  chip.className = 'chip';
+  const tile = document.createElement('i');
+  tile.className = 'tile';
+  tile.textContent = tool.t;
+  tile.style.setProperty('--tc', tool.c);
+  const lbl = document.createElement('span');
+  lbl.textContent = tool.n;
+  chip.appendChild(tile);
+  chip.appendChild(lbl);
+  return chip;
+}
 const toolfield = document.getElementById('toolfield');
 const usePhysics = !reduceMotion && finePointer && window.matchMedia('(min-width: 881px)').matches;
 
@@ -1645,20 +1685,15 @@ if (!usePhysics){
   /* fallback: wrapped chip cloud, zero motion cost */
   toolfield.classList.add('toolcloud');
   toolfield.style.height = 'auto';
-  TOOLS.forEach(t => {
-    const c = document.createElement('span');
-    c.className = 'chip'; c.textContent = t;
-    toolfield.appendChild(c);
-  });
+  TOOLS.forEach(t => toolfield.appendChild(makeChip(t)));
 } else {
   const chips = [];
   const fMouse = { x: -9999, y: -9999 };
   let fieldOn = false, t = 0;
 
   /* home positions: 5-column grid with organic jitter, stored as fractions */
-  TOOLS.forEach((name, i) => {
-    const el = document.createElement('span');
-    el.className = 'chip'; el.textContent = name;
+  TOOLS.forEach((tool, i) => {
+    const el = makeChip(tool);
     toolfield.appendChild(el);
     chips.push({
       el,
