@@ -162,7 +162,6 @@ body.is-loading{ overflow: hidden; }
   display:flex; flex-direction:column;
   justify-content:center;
   padding: 0 var(--gutter);
-  border-bottom: 1px solid var(--white-10); /* skeleton guide — removed in later phases */
 }
 .chapter__ghost{
   position:absolute; right: -2vw; top: 50%;
@@ -676,6 +675,168 @@ body.is-loading{ overflow: hidden; }
 }
 .toolcloud .chip{ position:static; }
 
+/* ============ CUSTOM CURSOR (Phase 6) ============ */
+.has-cursor, .has-cursor *{ cursor: none !important; }
+.cursor{
+  position: fixed; top:0; left:0; z-index: 400;
+  pointer-events: none;
+  mix-blend-mode: difference; /* auto-inverts on the cream chapter */
+}
+.cursor__dot{
+  position: fixed; top:0; left:0;
+  width: 6px; height: 6px; margin: -3px 0 0 -3px;
+  border-radius: 50%; background: var(--white);
+}
+.cursor__ring{
+  position: fixed; top:0; left:0;
+  width: 34px; height: 34px; margin: -17px 0 0 -17px;
+  border: 1px solid var(--white); border-radius: 999px;
+  display:flex; align-items:center; justify-content:center;
+  font-family: var(--font-mono); font-size: 9px;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--white);
+  transition: width .3s var(--ease-out), height .3s var(--ease-out),
+              margin .3s var(--ease-out), background-color .3s;
+}
+.cursor--link .cursor__ring{
+  width: 52px; height: 52px; margin: -26px 0 0 -26px;
+}
+.cursor--drag .cursor__ring, .cursor--view .cursor__ring, .cursor--hi .cursor__ring{
+  width: 68px; height: 68px; margin: -34px 0 0 -34px;
+  background: rgba(255,255,255,.1);
+}
+
+/* ============ MENU OVERLAY (Phase 6) ============ */
+.burger{
+  display:flex; flex-direction:column; gap:5px;
+  background:none; border:none; padding: 6px 2px;
+}
+.burger span{ width: 26px; height: 2px; background: var(--white); display:block; }
+.menu{
+  position: fixed; inset: 0; z-index: 250;
+  background: rgba(5,6,11,.96);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  display:flex; flex-direction:column; justify-content:center;
+  padding: 0 var(--gutter);
+  visibility: hidden; opacity: 0;
+}
+.menu.is-open{ visibility: visible; opacity: 1; }
+.menu__close{
+  position:absolute; top: 20px; right: var(--gutter);
+  background:none; border:none;
+  font-family: var(--font-mono); font-size: 12px;
+  letter-spacing:.18em; text-transform:uppercase; color: var(--white-60);
+  padding: 8px;
+}
+.menu__close:hover{ color: var(--white); }
+.menu a.menu__link{
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" 85, "wght" 900;
+  font-size: clamp(38px, 7.5vw, 96px);
+  line-height: 1.12; text-transform: uppercase;
+  color: var(--white); text-decoration: none;
+  width: fit-content;
+  transition: font-variation-settings .45s var(--ease-out), color .3s;
+}
+.menu a.menu__link:hover, .menu a.menu__link:focus-visible{
+  font-variation-settings: "wdth" 115, "wght" 900;
+  background: var(--grad);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.menu a.menu__link i{
+  font-style: normal;
+  font-family: var(--font-mono); font-size: 12px;
+  letter-spacing:.2em; color: var(--white-30);
+  vertical-align: super; margin-right: 14px;
+}
+.menu__meta{
+  margin-top: 6vh;
+  display:flex; gap: 28px; flex-wrap:wrap;
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing:.16em; text-transform:uppercase;
+}
+.menu__meta a{ color: var(--white-60); text-decoration:none; }
+.menu__meta a:hover{ color: var(--white); }
+
+/* ============ 07 · CONTACT — the final render (Phase 6) ============ */
+.contact{
+  border-bottom:none; overflow:hidden;
+  align-items:center; text-align:center;
+  min-height: 100vh; justify-content:center;
+}
+.contact__canvas{ position:absolute; inset:0; width:100%; height:100%; }
+.contact__markghost{
+  position:absolute; top:50%; left:50%;
+  width: min(52vw, 520px); transform: translate(-50%,-54%);
+  opacity:.05; pointer-events:none;
+}
+.contact__markghost *{ fill: var(--white); }
+.contact > *:not(.contact__canvas):not(.contact__markghost){ position:relative; z-index:2; }
+.contact__line{
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" 75, "wght" 900;
+  font-size: clamp(40px, 7.4vw, 118px);
+  line-height: .98; text-transform: uppercase; letter-spacing: -.01em;
+  margin-top: 14px;
+  will-change: font-variation-settings, transform;
+}
+.contact__cta{
+  margin-top: 6vh;
+  display:flex; align-items:center; gap: 28px; flex-wrap:wrap; justify-content:center;
+}
+.btn-primary{
+  position:relative; overflow:hidden;
+  display:inline-block; padding: 18px 44px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: linear-gradient(var(--void), var(--void)) padding-box, var(--grad) border-box;
+  font-family: var(--font-mono); font-size: 12px;
+  letter-spacing: .2em; text-transform: uppercase;
+  color: var(--white); text-decoration:none;
+  will-change: transform;
+}
+.btn-primary::before{
+  content:""; position:absolute; inset:0;
+  background: var(--grad);
+  transform: scaleX(0); transform-origin: 0 50%;
+  transition: transform .5s var(--ease-out);
+  z-index:-1; border-radius: inherit;
+}
+.btn-primary:hover::before, .btn-primary:focus-visible::before{ transform: scaleX(1); }
+.contact__roles{
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: .16em; text-transform: uppercase;
+  color: var(--white-60); text-decoration:none;
+  border-bottom: 1px solid var(--white-30); padding-bottom: 4px;
+}
+.contact__roles:hover{ color: var(--white); border-color: var(--electric); }
+.contact__email{
+  margin-top: 5vh;
+  display:flex; align-items:center; gap: 16px; justify-content:center; flex-wrap:wrap;
+  font-family: var(--font-mono); font-size: clamp(13px, 1.4vw, 16px);
+  color: var(--white-60);
+}
+.contact__email button{
+  background:none; border: 1px solid var(--white-10);
+  border-radius: 999px; padding: 7px 16px;
+  font-family: var(--font-mono); font-size: 10px;
+  letter-spacing:.16em; text-transform:uppercase; color: var(--white-60);
+  transition: color .3s, border-color .3s;
+}
+.contact__email button:hover{ color: var(--white); border-color: rgba(46,107,255,.55); }
+.contact__socials{
+  margin-top: 3vh;
+  display:flex; gap: 26px; justify-content:center;
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing:.2em; text-transform:uppercase;
+}
+.contact__socials a{ color: var(--white-30); text-decoration:none; transition: color .3s; }
+.contact__socials a:hover{ color: var(--white); }
+
+@media (prefers-reduced-motion: reduce){
+  .cursor{ display:none; }
+}
+
 /* ============ FOOTER STRIP ============ */
 .foot{
   display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap;
@@ -720,6 +881,12 @@ body.is-loading{ overflow: hidden; }
 <div class="grain" aria-hidden="true"></div>
 <div class="progress" aria-hidden="true"></div>
 
+<!-- ============ CUSTOM CURSOR ============ -->
+<div class="cursor" id="cursor" aria-hidden="true">
+  <div class="cursor__dot" id="cursorDot"></div>
+  <div class="cursor__ring" id="cursorRing"><span id="cursorLabel"></span></div>
+</div>
+
 <!-- ============ PRELOADER ============ -->
 <div class="loader" id="loader" aria-hidden="true">
   <!-- DK mark: D polygon (gets gradient fill — the "was red" half), K polygon, kite outline -->
@@ -746,8 +913,27 @@ body.is-loading{ overflow: hidden; }
     <a href="#work"><span>04</span>Work</a>
     <a href="#about"><span>03</span>About</a>
     <a href="#contact"><span>07</span>Contact</a>
+    <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </nav>
+
+<!-- ============ MENU OVERLAY ============ -->
+<div class="menu" id="menu" aria-hidden="true">
+  <button class="menu__close" id="menuClose">Close ✕</button>
+  <a class="menu__link" href="#hero"><i>01</i>Home</a>
+  <a class="menu__link" href="#about"><i>03</i>About</a>
+  <a class="menu__link" href="#work"><i>04</i>Work</a>
+  <a class="menu__link" href="#experience"><i>05</i>Experience</a>
+  <a class="menu__link" href="#contact"><i>07</i>Contact</a>
+  <div class="menu__meta">
+    <a href="mailto:danialkhattak2204@gmail.com">danialkhattak2204@gmail.com</a>
+    <a href="https://www.instagram.com/daniialkhann" target="_blank" rel="noopener">Insta</a>
+    <a href="https://www.linkedin.com/in/danial-khattak-0546b4124/" target="_blank" rel="noopener">LnkdN</a>
+    <a href="https://www.behance.net/danny_DUMvisuals" target="_blank" rel="noopener">Bē</a>
+  </div>
+</div>
 
 <nav class="rail" aria-label="Chapters">
   <a href="#hero" aria-label="Hero"></a>
@@ -939,15 +1125,34 @@ body.is-loading{ overflow: hidden; }
   <div class="toolfield" id="toolfield" aria-label="Tools and skills"></div>
 </section>
 
-<!-- ============ 07 · CONTACT ============ -->
-<section class="chapter" id="contact">
-  <span class="chapter__ghost" aria-hidden="true">07</span>
-  <p class="chapter__label">07 · The Final Render — Phase 6</p>
-  <p class="chapter__note">Pull-back exit, magnetic CTA, copy-email, Islamabad local time.</p>
+<!-- ============ 07 · CONTACT — the final render ============ -->
+<section class="chapter contact" id="contact">
+  <canvas class="contact__canvas" id="contactCanvas" aria-hidden="true"></canvas>
+  <svg class="contact__markghost" viewBox="55 -8 860 862" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <polygon points="468.01 69.24 468.01 718.68 438.87 674.45 395.77 608.99 395.63 608.79 298.94 461.97 368.19 428.6 395.77 470.48 395.77 188.61 254.84 256.51 277.5 290.92 208.26 324.29 143.31 225.66 395.77 104.05 417.27 93.69 468.01 69.24"/>
+    <polygon points="714.57 256.51 662.9 334.83 662.96 334.89 708.61 404.09 665.36 469.74 619.71 400.54 619.62 400.44 573.65 470.13 573.65 608.99 501.4 718.68 501.4 69.24 573.65 104.05 573.65 338.94 576.35 334.83 619.65 269.22 648.9 224.88 691.24 160.69 756.89 192.31 714.57 256.51"/>
+    <path d="M484.71,0L62.57,203.36l422.13,640.93L906.84,203.36,484.71,0ZM103.72,214.73L484.71,31.2l380.99,183.54-380.99,578.46L103.72,214.73Z"/>
+  </svg>
+  <p class="chapter__label">07 · Contact</p>
+  <h2 class="contact__line" id="contactLine">Let's render<br>something real.</h2>
+  <div class="contact__cta">
+    <a class="btn-primary" id="ctaBtn" href="mailto:danialkhattak2204@gmail.com?subject=Project%20inquiry">Start a project</a>
+    <a class="contact__roles" href="assets/danial-khattak-resume.pdf" target="_blank" rel="noopener">Open to select roles → Résumé</a>
+  </div>
+  <div class="contact__email">
+    <span id="emailText">danialkhattak2204@gmail.com</span>
+    <button id="copyEmail" type="button">Copy</button>
+  </div>
+  <div class="contact__socials">
+    <a href="https://www.instagram.com/daniialkhann" target="_blank" rel="noopener">Insta</a>
+    <a href="https://www.linkedin.com/in/danial-khattak-0546b4124/" target="_blank" rel="noopener">LnkdN</a>
+    <a href="https://www.behance.net/danny_DUMvisuals" target="_blank" rel="noopener">Bē</a>
+  </div>
 </section>
 
 <footer class="foot">
   <span>© 2026 Danial Khattak</span>
+  <span id="isbClock">ISB — --:--</span>
   <span>Rendered by hand &amp; machine</span>
 </footer>
 
@@ -1509,6 +1714,170 @@ if (!usePhysics){
     onToggle(self){ fieldOn = self.isActive; }
   });
 }
+
+/* ============================================================
+   PHASE 6A · CONTACT — orbital particles + closing line + CTA
+   ============================================================ */
+const cCanvas = document.getElementById('contactCanvas');
+const cCtx = cCanvas.getContext('2d');
+let contactOn = false;
+const orbiters = [];
+
+function sizeContactCanvas(){
+  cCanvas.width  = cCanvas.offsetWidth * dpr;
+  cCanvas.height = cCanvas.offsetHeight * dpr;
+}
+function initOrbit(){
+  sizeContactCanvas();
+  orbiters.length = 0;
+  const n = reduceMotion ? 0 : (isMobile ? 70 : 160);
+  for (let i = 0; i < n; i++){
+    orbiters.push({
+      a: Math.random() * Math.PI * 2,                       /* angle */
+      r: (0.16 + Math.random() * 0.42),                     /* radius as fraction of min dimension */
+      s: (Math.random() * .0018 + .0006) * (Math.random() > .5 ? 1 : -1),
+      size: (Math.random() * 1.5 + .4) * dpr,
+      wob: Math.random() * Math.PI * 2,
+      c: Math.random() > .42 ? '46,107,255' : '168,85,247',
+      baseA: Math.random() * .5 + .15
+    });
+  }
+}
+gsap.ticker.add(() => {
+  if (!contactOn || orbiters.length === 0) return;
+  cCtx.clearRect(0, 0, cCanvas.width, cCanvas.height);
+  const cx = cCanvas.width / 2, cy = cCanvas.height * .46;
+  const base = Math.min(cCanvas.width, cCanvas.height);
+  for (const p of orbiters){
+    p.a += p.s; p.wob += .01;
+    const r = p.r * base * (1 + Math.sin(p.wob) * .05);
+    const x = cx + Math.cos(p.a) * r * 1.25;   /* slightly elliptical */
+    const y = cy + Math.sin(p.a) * r * .8;
+    cCtx.beginPath();
+    cCtx.arc(x, y, p.size, 0, 6.2832);
+    cCtx.fillStyle = 'rgba(' + p.c + ',' + (p.baseA * (0.65 + 0.35 * Math.sin(p.wob * 2))).toFixed(3) + ')';
+    cCtx.fill();
+  }
+});
+ScrollTrigger.create({
+  trigger: '#contact', start: 'top bottom', end: 'bottom top',
+  onToggle(self){ contactOn = self.isActive; }
+});
+window.addEventListener('resize', sizeContactCanvas);
+initOrbit();
+
+/* closing line expands wdth 75 → 150 — the mirror of the hero compression */
+if (!reduceMotion){
+  const cAxes = { wdth: 75 };
+  gsap.to(cAxes, {
+    wdth: 150, ease: 'none',
+    scrollTrigger: { trigger: '#contact', start: 'top 90%', end: 'top 15%', scrub: 0.4 },
+    onUpdate(){
+      document.getElementById('contactLine').style.fontVariationSettings = '"wdth" ' + cAxes.wdth + ', "wght" 900';
+    }
+  });
+}
+
+/* magnetic pull on the primary CTA */
+function makeMagnetic(el, strength){
+  if (!finePointer || reduceMotion) return;
+  const zone = 90;
+  window.addEventListener('mousemove', (e) => {
+    const r = el.getBoundingClientRect();
+    const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    const dx = e.clientX - cx, dy = e.clientY - cy;
+    const d = Math.hypot(dx, dy);
+    if (d < zone + r.width / 2){
+      gsap.to(el, { x: dx * strength, y: dy * strength, duration: .5, ease: 'power2.out' });
+    } else {
+      gsap.to(el, { x: 0, y: 0, duration: .9, ease: 'elastic.out(1, .4)' });
+    }
+  });
+}
+makeMagnetic(document.getElementById('ctaBtn'), .3);
+
+/* copy email to clipboard */
+const copyBtn = document.getElementById('copyEmail');
+copyBtn.addEventListener('click', () => {
+  navigator.clipboard.writeText(document.getElementById('emailText').textContent.trim())
+    .then(() => {
+      copyBtn.textContent = 'Copied ✓';
+      setTimeout(() => { copyBtn.textContent = 'Copy'; }, 2000);
+    })
+    .catch(() => { copyBtn.textContent = 'Select & copy'; });
+});
+
+/* live Islamabad clock */
+const clockEl = document.getElementById('isbClock');
+function tickClock(){
+  clockEl.textContent = 'ISB — ' + new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Asia/Karachi', hour: '2-digit', minute: '2-digit'
+  }).format(new Date());
+}
+tickClock(); setInterval(tickClock, 15000);
+
+/* ============================================================
+   PHASE 6B · CUSTOM CURSOR — dot + lerped ring, context states
+   ============================================================ */
+if (finePointer && !reduceMotion){
+  document.documentElement.classList.add('has-cursor');
+  const cursor = document.getElementById('cursor');
+  const dot = document.getElementById('cursorDot');
+  const ring = document.getElementById('cursorRing');
+  const label = document.getElementById('cursorLabel');
+  const pos = { x: innerWidth / 2, y: innerHeight / 2 };
+  const ringPos = { x: pos.x, y: pos.y };
+
+  /* context zones */
+  document.querySelectorAll('.slide__marquee').forEach(el => el.dataset.cursor = 'drag');
+  const portrait0 = document.querySelector('.about__portrait');
+  if (portrait0) portrait0.dataset.cursor = 'hi';
+  document.querySelectorAll('.slide__link').forEach(el => el.dataset.cursor = 'view');
+
+  const LABELS = { drag: 'Drag', view: 'View', hi: 'Hi ✳' };
+
+  window.addEventListener('mousemove', (e) => { pos.x = e.clientX; pos.y = e.clientY; });
+  gsap.ticker.add(() => {
+    ringPos.x += (pos.x - ringPos.x) * .14;
+    ringPos.y += (pos.y - ringPos.y) * .14;
+    dot.style.transform  = 'translate3d(' + pos.x + 'px,' + pos.y + 'px,0)';
+    ring.style.transform = 'translate3d(' + ringPos.x.toFixed(1) + 'px,' + ringPos.y.toFixed(1) + 'px,0)';
+  });
+
+  document.addEventListener('mouseover', (e) => {
+    const zone = e.target.closest('[data-cursor]');
+    const link = e.target.closest('a, button');
+    const state = zone ? zone.dataset.cursor : (link ? 'link' : '');
+    cursor.className = 'cursor' + (state ? ' cursor--' + state : '');
+    label.textContent = LABELS[state] || '';
+  });
+}
+
+/* ============================================================
+   PHASE 6C · MENU OVERLAY
+   ============================================================ */
+const menu = document.getElementById('menu');
+const burger = document.getElementById('burger');
+
+function openMenu(){
+  menu.classList.add('is-open');
+  menu.setAttribute('aria-hidden', 'false');
+  burger.setAttribute('aria-expanded', 'true');
+  lenis && lenis.stop();
+  gsap.fromTo('.menu__link, .menu__meta',
+    { y: 40, opacity: 0 },
+    { y: 0, opacity: 1, duration: .8, ease: 'expo.out', stagger: .06 });
+}
+function closeMenu(){
+  menu.classList.remove('is-open');
+  menu.setAttribute('aria-hidden', 'true');
+  burger.setAttribute('aria-expanded', 'false');
+  lenis && lenis.start();
+}
+burger.addEventListener('click', openMenu);
+document.getElementById('menuClose').addEventListener('click', closeMenu);
+window.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenu(); });
+menu.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener('click', closeMenu));
 
 /* ============ SCROLL PROGRESS LINE ============ */
 gsap.to('.progress', {
