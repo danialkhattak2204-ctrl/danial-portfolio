@@ -891,7 +891,7 @@ body.is-loading{ overflow: hidden; }
 /* ============ MOBILE ============ */
 @media (max-width: 720px){
   .rail{ display:none; }
-  .nav__links a span{ display:none; }
+  .nav__links a{ display:none; }
   .chapter__ghost{ font-size: 44vw; right:-8vw; }
   .hero__orb{ filter: blur(60px); }
 }
@@ -942,9 +942,10 @@ body.is-loading{ overflow: hidden; }
     </svg>
   </a>
   <div class="nav__links">
-    <a href="#work"><span>04</span>Work</a>
-    <a href="#about"><span>03</span>About</a>
-    <a href="#contact"><span>07</span>Contact</a>
+    <a href="#about">About</a>
+    <a href="#work">Work</a>
+    <a href="#experience">Experience</a>
+    <a href="#contact">Contact</a>
     <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false">
       <span></span><span></span><span></span>
     </button>
@@ -1212,7 +1213,7 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
     const target = document.querySelector(a.getAttribute('href'));
     if (!target) return;
     e.preventDefault();
-    lenis ? lenis.scrollTo(target) : target.scrollIntoView({ behavior:'smooth' });
+    lenis ? lenis.scrollTo(target, { force: true }) : target.scrollIntoView({ behavior:'smooth' });
   });
 });
 
